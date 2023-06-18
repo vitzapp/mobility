@@ -1,3 +1,3 @@
-library mobility;
+library;
 
 export 'src/provider/efa.dart' show EfaProvider;
