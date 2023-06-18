@@ -43,3 +43,58 @@ class Location {
     }
   }
 }
+
+class Leg {
+  /// The type of the vehicle (e.g. bus, tram, ...)
+  String mode;
+
+  /// Line number
+  String line;
+
+  /// Final destination
+  String direction;
+
+  Location departure;
+  String depatureTime;
+
+  Location arrival;
+  String arrivalTime;
+
+  Leg({
+    required this.mode,
+    required this.line,
+    required this.direction,
+    required this.departure,
+    required this.depatureTime,
+    required this.arrival,
+    required this.arrivalTime,
+  });
+}
+
+class Trip {
+  String depature;
+  String arrival;
+  String duration;
+  int interchange;
+  List<Leg> nodes;
+
+  Trip({
+    required this.depature,
+    required this.arrival,
+    required this.duration,
+    required this.interchange,
+    required this.nodes,
+  });
+}
+
+class TripResponse {
+  String origin;
+  String destination;
+  List<Trip> trips;
+
+  TripResponse({
+    required this.origin,
+    required this.destination,
+    required this.trips,
+  });
+}

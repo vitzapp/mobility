@@ -1,7 +1,10 @@
 import 'package:mobility/mobility.dart';
 
-void main() {
-  var provider = EfaProvider('https://efa.vvo-online.de/std3');
+void main() async {
+  var provider = EfaProvider(efaVvoUrl);
 
-  provider.queryTrip('Zellescher Weg', 'Postplatz', 'Dresden');
+  TripResponse response = await provider.queryTrip('Zellescher Weg', 'Postplatz', 'Dresden');
+  for (var trip in response.trips) {
+    print(trip.arrival);
+  }
 }
