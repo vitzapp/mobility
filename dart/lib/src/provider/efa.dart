@@ -3,15 +3,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mobility/src/dto.dart';
 import 'package:mobility/src/net.dart';
+import 'package:mobility/src/provider/params.dart';
 
 // Default request endpoints
 const String defaultDepartureMonitorEndpoint = 'XSLT_DM_REQUEST';
 const String defaultTripEndpoint = 'XSLT_TRIP_REQUEST2';
 const String defaultStopfinderEndpoint = 'XML_STOPFINDER_REQUEST';
 const String defaultCoordEndpoint = 'XML_COORD_REQUEST';
-
-const String coordFormat = 'WGS84[DD.ddddd]';
-const int coordFormatTail = 7;
 
 /// Data provider for systems using EFA (Eleketronische Fahrplanauskunft) software.
 class EfaProvider {
@@ -32,11 +30,8 @@ class EfaProvider {
       [String? destCity, DateTime? time, String deparr = 'dep']) async {
     destCity ??= originCity;
     time ??= DateTime.now();
-      
+
     QueryParameters params = {
-      'sessionID': '0',
-      'requestID': '0',
-      'language': 'de',
       'execInst': 'normal',
       'command': '',
       'ptOptionsActive': '-1',
@@ -57,10 +52,10 @@ class EfaProvider {
       'itdTripDateTimeDepArr': deparr,
       'itdTimeHour': time.hour,
       'itdTimeMinute': time.minute,
-      'outputFormat': 'JSON',
-      'coordOutputFormat': coordFormat,
-      'coordOutputFormatTail': coordFormatTail
     };
+
+    // FIXME: probably not the correct location names
+    appendTripRequestParams(params, Location(type: LocationType.station, name: origin), Location(type: LocationType.station, name: dest));
 
     var uri = buildRequestUri(baseUrl, defaultTripEndpoint, params);
 
