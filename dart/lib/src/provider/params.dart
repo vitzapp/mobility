@@ -6,7 +6,8 @@ const int coordFormatTail = 7;
 
 const String language = 'de';
 
-void appendLocationParams(QueryParameters params, Location location, String suffix) {
+void appendLocationParams(
+    QueryParameters params, Location location, String suffix) {
   if (location.type == LocationType.station) {
     params['type_$suffix'] = 'stop';
     params['name_$suffix'] = location.name;
@@ -23,7 +24,8 @@ void appendCommonRequestParams(QueryParameters params, String outputFormat) {
   });
 }
 
-void appendTripRequestParams(QueryParameters params, Location from, Location to) {
+void appendTripRequestParams(
+    QueryParameters params, Location from, Location to) {
   appendCommonRequestParams(params, 'JSON');
 
   params['sessionID'] = '0';

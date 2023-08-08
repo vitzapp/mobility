@@ -18,11 +18,11 @@ class EfaProvider {
   EfaProvider(this.baseUrl);
 
   /// Get a trip information between two stops.
-  /// 
+  ///
   /// [origin] and [originCity] specify the city and stop name
   /// where the trip starts. [dest] specifies the destination and if [destCity]
   /// is not provided it defaults to [originCity].
-  /// 
+  ///
   /// [time] and [deparr] can be used to specified when the trip shoul start
   /// or end. For that [deparr] can have two values: `dep` for departure and
   /// `arr` for arrival.
@@ -39,23 +39,17 @@ class EfaProvider {
       'itDateDay': time.day,
       'itDateMonth': time.month,
       'itDateYear': time.year,
-      'place_origin': originCity,
-      'placeState_origin': 'empty',
-      'type_origin': 'stop',
-      'name_origin': origin,
-      'nameState_origin': 'empty',
-      'place_destination': destCity,
-      'placeState_destination': 'empty',
-      'type_destination': 'stop',
-      'name_destination': dest,
-      'nameState_destination': 'empty',
       'itdTripDateTimeDepArr': deparr,
       'itdTimeHour': time.hour,
       'itdTimeMinute': time.minute,
     };
 
-    // FIXME: probably not the correct location names
-    appendTripRequestParams(params, Location(type: LocationType.station, name: origin), Location(type: LocationType.station, name: dest));
+    appendTripRequestParams(
+        params,
+        Location(type: LocationType.station, name: origin),
+        Location(type: LocationType.station, name: dest));
+    params['place_origin'] = originCity;
+    params['place_destination'] = destCity;
 
     var uri = buildRequestUri(baseUrl, defaultTripEndpoint, params);
 
@@ -68,16 +62,18 @@ class EfaProvider {
         TripResponse(
           origin: json['origin']['points']['point']['name'],
           destination: json['destination']['points']['point']['name'],
-          trips: List.of((json['trips'] as List).map((singleTrip) => 
-            Trip(
-              depature: singleTrip['legs'].first['points'].first['dateTime']['time'],
-              arrival: singleTrip['legs'].last['points'].last['dateTime']['time'], 
-              duration: singleTrip['duration'], 
+          trips: List.of((json['trips'] as List).map(
+            (singleTrip) => Trip(
+              depature: singleTrip['legs'].first['points'].first['dateTime']
+                  ['time'],
+              arrival: singleTrip['legs'].last['points'].last['dateTime']
+                  ['time'],
+              duration: singleTrip['duration'],
               interchange: int.parse(singleTrip['interchange']),
-              nodes: List.of((singleTrip['legs'] as List).map((leg) => 
-                Leg(
-                  mode: leg['mode']['product'], 
-                  line: leg['mode']['number'], 
+              nodes: List.of((singleTrip['legs'] as List).map(
+                (leg) => Leg(
+                  mode: leg['mode']['product'],
+                  line: leg['mode']['number'],
                   direction: leg['mode']['destination'],
                   departure: Location(
                     type: LocationType.station,
@@ -85,9 +81,8 @@ class EfaProvider {
                   ),
                   depatureTime: leg['points'].first['dateTime']['time'],
                   arrival: Location(
-                    type: LocationType.station,
-                    name: leg['points'][1]['nameWO']
-                  ),
+                      type: LocationType.station,
+                      name: leg['points'][1]['nameWO']),
                   arrivalTime: leg['points'][1]['dateTime']['time'],
                 ),
               )),
@@ -98,12 +93,10 @@ class EfaProvider {
     }
 
     // fallback for errors
-    return Future.value(
-      TripResponse(
-        origin: '$originCity, $origin', 
-        destination: '$destCity, $dest',
-        trips: [],
-      )
-    );
+    return Future.value(TripResponse(
+      origin: '$originCity, $origin',
+      destination: '$destCity, $dest',
+      trips: [],
+    ));
   }
 }
