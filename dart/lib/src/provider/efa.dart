@@ -31,6 +31,7 @@ class EfaProvider {
     destCity ??= originCity;
     time ??= DateTime.now();
 
+    // TODO: make these more dynamic
     QueryParameters params = {
       'execInst': 'normal',
       'command': '',
@@ -58,6 +59,7 @@ class EfaProvider {
     if (response.statusCode == 200) {
       var json = jsonDecode(utf8.decode(response.body.codeUnits));
 
+      // Decode json into object
       return Future.value(
         TripResponse(
           origin: json['origin']['points']['point']['name'],
@@ -98,5 +100,29 @@ class EfaProvider {
       destination: '$destCity, $dest',
       trips: [],
     ));
+  }
+
+  void getStops(String contraint, int maxLocations) async {
+    QueryParameters params = {
+      'locationServerActive': '1',
+      'regionID_sf': '1',
+      'type_sf': 'any',
+      'name_fs': Uri.encodeComponent(contraint),
+      'anyObjFilter_sf': '2',
+      'reducedAnyPostcodeObjFilter_sf': '64',
+      'reducedAnyTooManyObjFilter_sf': '2',
+      'useHouseNumberList': 'true',
+      'anyMaxSizeHitList': '$maxLocations'
+    };
+
+    appendCommonRequestParams(params, 'JSON');
+    var uri = buildRequestUri(baseUrl, defaultStopfinderEndpoint, params);
+
+    var response = await http.get(uri);
+    if (response.statusCode == 200) {
+      //var json = jsonDecode(utf8.decode(response.body.codeUnits));
+
+      print(utf8.decode(response.body.codeUnits));
+    }
   }
 }
